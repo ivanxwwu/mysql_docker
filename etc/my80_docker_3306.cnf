@@ -1,0 +1,54 @@
+[mysql]
+port= 3306
+prompt="\\u@\\h:\\p [\\d]>"
+#quick
+[mysqld]
+server-id=81
+persisted_globals_load=0
+plugin-load-add=mysql_clone.so
+collation-server = utf8mb4_0900_ai_ci
+skip-external-locking
+skip-name-resolve
+user = mysql
+port = 3306
+innodb_data_file_path=ibdata1:67108864:autoextend
+open_files_limit=  10240
+back_log=  600
+max_connections=  5000
+max_connect_errors =  6000
+wait_timeout =  605800
+#open_tables= 600
+#table_cache= 650
+#opened_tables= 630
+max_allowed_packet=32M
+sort_buffer_size=4M
+join_buffer_size=4M
+thread_cache_size= 300
+tmp_table_size=8M
+max_heap_table_size=8M
+key_buffer_size=8M
+read_buffer_size=1M
+read_rnd_buffer_size=16M
+bulk_insert_buffer_size=32M
+lower_case_table_names=1
+default-storage-engine=INNODB
+innodb_buffer_pool_size=128M
+innodb_log_buffer_size=16M
+innodb_log_file_size=4M
+innodb_flush_method=O_DIRECT
+######################
+#thread_concurrency= 32
+long_query_time= 1
+slow-query-log=on
+transaction_isolation=REPEATABLE-READ
+binlog_format=row
+expire_logs_days=7
+max_binlog_size=100M
+default_authentication_plugin=mysql_native_password
+
+gtid-mode=ON
+enforce-gtid-consistency
+[mysqldump]
+quick
+max_allowed_packet=32M
+[mysqld_safe]
