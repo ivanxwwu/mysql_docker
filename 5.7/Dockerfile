@@ -12,6 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#FROM oraclelinux:7-slim
 FROM oraclelinux:7-slim
 
 ARG MYSQL_SERVER_PACKAGE=mysql-community-server-minimal-5.7.29
@@ -31,6 +32,8 @@ RUN yum install -y https://repo.mysql.com/mysql-community-minimal-release-el7.rp
       iputils \
       wget \
       iproute \
+      sudo \
+      make \
   && yum clean all \
   && mkdir /docker-entrypoint-initdb.d
 
@@ -39,6 +42,7 @@ VOLUME /var/lib/mysql
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
 COPY sshd_config /etc/ssh/sshd_config
+ADD  go1.14.2.linux-amd64.tar.gz /usr/local/
 
 RUN /usr/bin/ssh-keygen -q -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key -N ''
 RUN /usr/bin/ssh-keygen -q -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''

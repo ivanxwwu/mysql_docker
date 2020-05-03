@@ -19,6 +19,15 @@ echo "[Entrypoint] MySQL Docker Image 5.7.29-1.1.15"
 
 nohup /usr/sbin/sshd -D -f /etc/ssh/sshd_config 2>&1 > /dev/null &
 
+#go 环境配置
+cat >> ~/.bashrc << EOF
+export GOHOME=/usr/local/go
+export GOPATH=/root/goworkspace
+export PATH=$PATH:\${GOHOME}/bin
+export GOBIN=$GOPATH/bin
+EOF
+. ~/.bashrc
+
 
 # Fetch value from server config
 # We use mysqld --verbose --help instead of my_print_defaults because the
