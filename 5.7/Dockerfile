@@ -30,6 +30,7 @@ RUN yum install -y https://repo.mysql.com/mysql-community-minimal-release-el7.rp
       vim \
       iputils \
       wget \
+      iproute \
   && yum clean all \
   && mkdir /docker-entrypoint-initdb.d
 
