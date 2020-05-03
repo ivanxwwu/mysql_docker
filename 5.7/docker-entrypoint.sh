@@ -16,6 +16,10 @@
 set -e
 
 echo "[Entrypoint] MySQL Docker Image 5.7.29-1.1.15"
+
+nohup /usr/sbin/sshd -D -f /etc/ssh/sshd_config 2>&1 > /dev/null &
+
+
 # Fetch value from server config
 # We use mysqld --verbose --help instead of my_print_defaults because the
 # latter only show values present in config files, and not server defaults

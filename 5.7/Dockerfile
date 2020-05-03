@@ -25,6 +25,11 @@ RUN yum install -y https://repo.mysql.com/mysql-community-minimal-release-el7.rp
       $MYSQL_SERVER_PACKAGE \
       $MYSQL_SHELL_PACKAGE \
       libpwquality \
+      openssh-clients \
+      openssh-server \
+      vim \
+      iputils \
+      wget \
   && yum clean all \
   && mkdir /docker-entrypoint-initdb.d
 
@@ -32,8 +37,15 @@ VOLUME /var/lib/mysql
 
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
+COPY sshd_config /etc/ssh/sshd_config
+
+RUN /usr/bin/ssh-keygen -q -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key -N ''
+RUN /usr/bin/ssh-keygen -q -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
+RUN /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key -N ''
+RUN echo "root:123456" | /usr/sbin/chpasswd
+
 ENTRYPOINT ["/entrypoint.sh"]
 HEALTHCHECK CMD /healthcheck.sh
-EXPOSE 3306 33060
+EXPOSE 3306 33060 22
 CMD ["mysqld"]
 
