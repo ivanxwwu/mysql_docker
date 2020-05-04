@@ -1,6 +1,7 @@
 [client]
 port= 3306
 #prompt=mysql57_3306> 
+socket=/usr/local/mysql/mysql.sock
 [mysql]
 prompt="\\u@\\h:\\p [\\d]>" 
 #quick
@@ -8,12 +9,13 @@ prompt="\\u@\\h:\\p [\\d]>"
 server-id=72
 skip-host-cache
 skip-name-resolve
-datadir=/var/lib/mysql
-socket=/var/lib/mysql/mysql.sock
-secure-file-priv=/var/lib/mysql-files
-log-error=/var/log/mysqld.log
-pid-file=/var/run/mysqld/mysqld.pid
 #persisted_globals_load=0
+basedir = /usr/local/mysql
+datadir = /home/mysql/data
+tmpdir = /home/mysql/temp
+socket = /usr/local/mysql/mysql.sock
+log-error = /home/mysql/logs/mysql_error.log
+pid-file = /home/mysql/mysql.pid
 character-set-server = utf8mb4
 #collation-server = utf8mb4_0900_ai_ci
 collation-server = utf8mb4_general_ci
@@ -50,14 +52,27 @@ innodb_flush_method=O_DIRECT
 #thread_concurrency= 32
 long_query_time= 1
 slow-query-log=on
+slow-query-log-file=/home/mysql/logs/mysql-slow.log
 transaction_isolation=REPEATABLE-READ
+log_bin=/home/mysql/data/mysql-bin.log
 binlog_format=row
 expire_logs_days=7
 max_binlog_size=100M
 
 gtid-mode=ON
 enforce-gtid-consistency
+
+super_read_only=0
+read_only=0
+plugin-load-add=semisync_slave.so
+plugin-load-add=semisync_master.so
+rpl_semi_sync_master_enabled = 1
+rpl_semi_sync_master_timeout = 1000
+rpl-semi-sync-slave-enabled = 1
+
 [mysqldump]
 quick
 max_allowed_packet=32M
 [mysqld_safe]
+log-error = /home/mysql/logs/mysql_error.log
+pid-file = /home/mysql/mysql.pid

@@ -207,8 +207,8 @@ EOF
 fi
 
 if [ $STARTCMD ]; then
-	exec "mysqld_safe"
+	exec /usr/bin/sudo -H -u mysql $STARTCMD >> /1.log
 else
-	exec "$@"
+	exec $@
 fi
 

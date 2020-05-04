@@ -62,7 +62,7 @@ RUN mkdir /home/mysql/data -p \
 	&& mkdir /home/mysql/logs -p
 
 RUN groupadd mysql \
-	&& useradd -r -g mysql -s /bin/false mysql \
+	&& useradd -r -g mysql -s /bin/bash mysql \
 	&& chown -R mysql:mysql /home/mysql \
 	&& chown -R mysql:mysql /usr/local/mysql \
 	&& chown -R mysql:mysql /usr/local/mysql-5.7.27-linux-glibc2.12-x86_64
@@ -71,12 +71,14 @@ COPY docker-entrypoint.sh /entrypoint.sh
 #COPY healthcheck.sh /healthcheck.sh
 COPY sshd_config /etc/ssh/sshd_config
 ADD  go1.14.2.linux-amd64.tar.gz /usr/local/
+COPY ./init.sh /init.sh
 
 ENV PATH=$PATH:/usr/local/go/bin
 ENV PATH=$PATH:/usr/local/mysql/bin
 
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh mysqld"]
 #HEALTHCHECK CMD /healthcheck.sh
 EXPOSE 3306 33060 22
-CMD ["mysqld"]
+#CMD ["mysqld"]
+CMD ["/init.sh"]
 
