@@ -19,15 +19,6 @@ echo "[Entrypoint] MySQL Docker Image 5.7.29-1.1.15"
 
 nohup /usr/sbin/sshd -D -f /etc/ssh/sshd_config 2>&1 > /dev/null &
 
-#go 环境配置
-cat >> ~/.bashrc << EOF
-export GOHOME=/usr/local/go
-export GOPATH=/root/goworkspace
-export PATH=$PATH:\${GOHOME}/bin
-export GOBIN=$GOPATH/bin
-EOF
-. ~/.bashrc
-
 
 # Fetch value from server config
 # We use mysqld --verbose --help instead of my_print_defaults because the
@@ -93,7 +84,8 @@ if [ "$1" = 'mysqld' ]; then
 
 		# To avoid using password on commandline, put it in a temporary file.
 		# The file is only populated when and if the root password is set.
-		PASSFILE=$(mktemp -u /var/lib/mysql-files/XXXXXXXXXX)
+		#PASSFILE=$(mktemp -u /var/lib/mysql-files/XXXXXXXXXX)
+		PASSFILE=$(mktemp -u $DATADIR/XXXXXXXXXX)
 		install /dev/null -m0600 -omysql -gmysql "$PASSFILE"
 		# Define the client command used throughout the script
 		# "SET @@SESSION.SQL_LOG_BIN=0;" is required for products like group replication to work properly
@@ -214,5 +206,9 @@ EOF
 	echo "[Entrypoint] Starting MySQL 5.7.29-1.1.15"
 fi
 
-exec "$@"
+if [ $STARTCMD ]; then
+	exec "mysqld_safe"
+else
+	exec "$@"
+fi
 
