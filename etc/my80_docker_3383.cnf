@@ -1,16 +1,25 @@
+[client]
+port=3383
+socket=/usr/local/mysql/mysql.sock
 [mysql]
-port= 3306
+port= 3383
 prompt="\\u@\\h:\\p [\\d]>"
 #quick
 [mysqld]
-server-id=37
+server-id=83
 persisted_globals_load=0
 plugin-load-add=mysql_clone.so
 collation-server = utf8mb4_0900_ai_ci
 skip-external-locking
 skip-name-resolve
+basedir = /usr/local/mysql
+datadir = /home/mysql/data
+tmpdir = /home/mysql/temp
+socket = /usr/local/mysql/mysql.sock
+log-error = /home/mysql/logs/mysql_error.log
+pid-file = /home/mysql/mysql.pid
 user = mysql
-port = 3306
+port = 3383
 innodb_data_file_path=ibdata1:67108864:autoextend
 open_files_limit=  10240
 back_log=  600
@@ -40,13 +49,13 @@ innodb_flush_method=O_DIRECT
 #thread_concurrency= 32
 long_query_time= 1
 slow-query-log=on
+slow-query-log-file=/home/mysql/logs/mysql-slow.log
 transaction_isolation=REPEATABLE-READ
+log_bin=/home/mysql/data/mysql-bin.log
 binlog_format=row
 expire_logs_days=7
 max_binlog_size=100M
 default_authentication_plugin=mysql_native_password
-
-read_only=1
 
 gtid-mode=ON
 enforce-gtid-consistency
@@ -54,3 +63,5 @@ enforce-gtid-consistency
 quick
 max_allowed_packet=32M
 [mysqld_safe]
+log-error = /home/mysql/logs/mysql_error.log
+pid-file = /home/mysql/mysql.pid

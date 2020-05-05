@@ -104,3 +104,6 @@ A number of MySQL products are included in the Docker container you created with
 ### More Topics on Deploying MySQL Server with Docker
 
 For more topics on deploying MySQL Server with Docker like starting and connecting to the server, server configuration, persisting data and configuration, server error log, server upgrades, and the Docker environment variables, see [Deploying MySQL Server with Docker](https://dev.mysql.com/doc/refman/8.0/en/linux-installation-docker.html) in the MySQL Server manual.
+
+### Run cmd example
+docker run -dit -p3381:3306 --privileged --network ivan-network --ip 172.172.0.81 -v /etc/my80_docker_3381.cnf:/etc/my.cnf -v /etc/localtime:/etc/localtime -v /root/Downloads:/Downloads -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD='123456' -e MYSQL_USER='ivanadmin' -e MYSQL_PASSWORD='123456'  -e MYSQL_DATABASE='ivan_db' -e STARTCMD='/usr/local/mysql/bin/mysqld_safe'  --name ivan8  -d ivan/mysql-server:8.0.19.1 
