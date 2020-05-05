@@ -207,7 +207,7 @@ EOF
 fi
 
 if [ $STARTCMD ]; then
-	exec /usr/bin/sudo -H -u mysql $STARTCMD >> /1.log
+	exec /usr/bin/sudo -H -u mysql $STARTCMD 
 else
 	exec $@
 fi

@@ -16,6 +16,8 @@
 set -e
 
 echo "[Entrypoint] MySQL Docker Image 8.0.19-1.1.15"
+
+nohup /usr/sbin/sshd -D -f /etc/ssh/sshd_config 2>&1 > /dev/null &
 # Fetch value from server config
 # We use mysqld --verbose --help instead of my_print_defaults because the
 # latter only show values present in config files, and not server defaults
@@ -42,7 +44,6 @@ if [ "$1" = 'mysqld' ]; then
 		exit 1
 	fi
 
-	echo 11111 >> /1.txt
 	# Get config
 	DATADIR="$(_get_config 'datadir' "$@")"
 	SOCKET="$(_get_config 'socket' "$@")"
@@ -54,7 +55,6 @@ if [ "$1" = 'mysqld' ]; then
 		fi
 	fi
 
-	echo 2222 >> /1.txt
 	if [ ! -d "$DATADIR/mysql" ]; then
 		# If the password variable is a filename we use the contents of the file. We
 		# read this first to make sure that a proper error is generated for empty files.
@@ -82,12 +82,11 @@ if [ "$1" = 'mysqld' ]; then
 
 		# To avoid using password on commandline, put it in a temporary file.
 		# The file is only populated when and if the root password is set.
-		PASSFILE=$(mktemp -u /var/lib/mysql-files/XXXXXXXXXX)
+		PASSFILE=$(mktemp -u ${DATADIR}/XXXXXXXXXX)
 		install /dev/null -m0600 -omysql -gmysql "$PASSFILE"
 		# Define the client command used throughout the script
 		# "SET @@SESSION.SQL_LOG_BIN=0;" is required for products like group replication to work properly
 		mysql=( mysql --defaults-extra-file="$PASSFILE" --protocol=socket -uroot -hlocalhost --socket="$SOCKET" --init-command="SET @@SESSION.SQL_LOG_BIN=0;")
-		echo 33333 >> /1.txt
 
 		if [ ! -z "" ];
 		then
@@ -137,10 +136,8 @@ EOF
 			echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE\` ;" | "${mysql[@]}"
 			mysql+=( "$MYSQL_DATABASE" )
 		fi
-		echo 44444 >> /1.txt
 
 		if [ "$MYSQL_USER" -a "$MYSQL_PASSWORD" ]; then
-			echo 44444 >> /1.txt
 			echo "CREATE USER '"$MYSQL_USER"'@'%' IDENTIFIED BY '"$MYSQL_PASSWORD"' ;" | "${mysql[@]}"
 			echo "GRANT ALL ON *.* TO '"$MYSQL_USER"'@'%' WITH GRANT OPTION;" | "${mysql[@]}"
 
@@ -206,5 +203,9 @@ EOF
 	echo "[Entrypoint] Starting MySQL 8.0.19-1.1.15"
 fi
 
-exec "$@"
+if [ $STARTCMD ]; then
+        exec /usr/bin/sudo -H -u mysql $STARTCMD 
+else
+        exec $@
+fi
 

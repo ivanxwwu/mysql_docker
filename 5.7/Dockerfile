@@ -77,7 +77,7 @@ ENV PATH=$PATH:/usr/local/go/bin
 ENV PATH=$PATH:/usr/local/mysql/bin
 
 #ENTRYPOINT ["/entrypoint.sh mysqld"]
-#HEALTHCHECK CMD /healthcheck.sh
+HEALTHCHECK CMD /healthcheck.sh
 EXPOSE 3306 33060 22
 #CMD ["mysqld"]
 CMD ["/init.sh"]

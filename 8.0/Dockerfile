@@ -22,18 +22,51 @@ RUN yum install -y https://repo.mysql.com/mysql-community-minimal-release-el7.rp
       https://repo.mysql.com/mysql-community-release-el7.rpm \
   && yum-config-manager --enable mysql80-server-minimal \
   && yum install -y \
-      $MYSQL_SERVER_PACKAGE \
-      $MYSQL_SHELL_PACKAGE \
+      libaio \
+      perl \
+      perl-Data-Dumper.x86_64 \
+      numactl \
+      openssl \
+      gcc-c++ \
+      iprouter \
+      vim \
+      openssh-clients \
+      openssh-server \
+      iputils \
+      sudo \
+      make \
       libpwquality \
   && yum clean all \
   && mkdir /docker-entrypoint-initdb.d
 
+RUN /usr/bin/ssh-keygen -q -t rsa -b 2048 -f /etc/ssh/ssh_host_rsa_key -N ''
+RUN /usr/bin/ssh-keygen -q -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N ''
+RUN /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_ed25519_key -N ''
+RUN echo "root:123456" | /usr/sbin/chpasswd
+
+ADD mysql-8.0.19-linux-glibc2.12-x86_64.tar.xz  /usr/local/
+RUN ln -s /usr/local/mysql-8.0.19-linux-glibc2.12-x86_64 /usr/local/mysql
+
+RUN mkdir /home/mysql/data -p \
+        && mkdir /home/mysql/temp -p \
+        && mkdir /home/mysql/logs -p
+
+RUN groupadd mysql \
+        && useradd -r -g mysql -s /bin/bash mysql \
+        && chown -R mysql:mysql /home/mysql \
+        && chown -R mysql:mysql /usr/local/mysql \
+        && chown -R mysql:mysql /usr/local/mysql-8.0.19-linux-glibc2.12-x86_64
+
 VOLUME /var/lib/mysql
 
+COPY sshd_config /etc/ssh/sshd_config
 COPY docker-entrypoint.sh /entrypoint.sh
 COPY healthcheck.sh /healthcheck.sh
-ENTRYPOINT ["/entrypoint.sh"]
+COPY ./init.sh /init.sh
+
+ENV PS1="[\u@\h \W] \$ "
+ENV PATH=$PATH:/usr/local/mysql/bin
+
 HEALTHCHECK CMD /healthcheck.sh
 EXPOSE 3306 33060
-CMD ["mysqld"]
-
+CMD ["/init.sh"]
