@@ -1,14 +1,16 @@
 [client]
-port=3383
+port=3306
 socket=/usr/local/mysql/mysql.sock
 [mysql]
-port= 3383
+port= 3306
 prompt="\\u@\\h:\\p [\\d]>"
 #quick
 [mysqld]
 server-id=83
+bind_address                            = 0.0.0.0
 persisted_globals_load=0
 plugin-load-add=mysql_clone.so
+plugin-load-add=group_replication.so
 collation-server = utf8mb4_0900_ai_ci
 skip-external-locking
 skip-name-resolve
@@ -19,7 +21,7 @@ socket = /usr/local/mysql/mysql.sock
 log-error = /home/mysql/logs/mysql_error.log
 pid-file = /home/mysql/mysql.pid
 user = mysql
-port = 3383
+port = 3306
 innodb_data_file_path=ibdata1:67108864:autoextend
 open_files_limit=  10240
 back_log=  600
@@ -58,7 +60,25 @@ max_binlog_size=100M
 default_authentication_plugin=mysql_native_password
 
 gtid-mode=ON
-enforce-gtid-consistency
+enforce_gtid_consistency=ON
+binlog_checksum=NONE
+log_bin=binlog
+log_slave_updates=ON
+binlog_format=ROW
+master_info_repository=TABLE
+relay_log_info_repository=TABLE
+
+binlog_checksum=none
+transaction_write_set_extraction=XXHASH64
+loose-group_replication_group_name="3db33b36-0e51-409f-a61d-c99756e90155"
+loose-group_replication_start_on_boot=off
+loose-group_replication_local_address="ivan83:33061"
+loose-group_replication_ip_whitelist="ivan81/24,ivan82/24,ivan83/24,127.0.0.1/8"
+loose-group_replication_group_seeds="ivan81:33061,ivan82:33061,ivan83:33061"
+loose-group_replication_bootstrap_group=off
+binlog_transaction_dependency_tracking=writeset
+report_host=ivan83
+report_port=3306
 [mysqldump]
 quick
 max_allowed_packet=32M

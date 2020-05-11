@@ -107,3 +107,6 @@ For more topics on deploying MySQL Server with Docker like starting and connecti
 
 ### Run cmd example
 docker run -dit -p3381:3306 --privileged --network ivan-network --ip 172.172.0.81 -v /etc/my80_docker_3381.cnf:/etc/my.cnf -v /etc/localtime:/etc/localtime -v /root/Downloads:/Downloads -e MYSQL_ALLOW_EMPTY_PASSWORD=1 -e MYSQL_ROOT_PASSWORD='123456' -e MYSQL_USER='ivanadmin' -e MYSQL_PASSWORD='123456'  -e MYSQL_DATABASE='ivan_db' -e STARTCMD='/usr/local/mysql/bin/mysqld_safe'  --name ivan8  -d ivan/mysql-server:8.0.19.1 
+
+### Tencent download recommended
+https://mirrors.cloud.tencent.com/mysql/downloads
